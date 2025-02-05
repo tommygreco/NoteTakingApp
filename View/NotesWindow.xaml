@@ -13,7 +13,7 @@
     </Window.Resources>
     <DockPanel DataContext="{StaticResource vm}">
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="File" Click="MenuItem_Click">
+            <MenuItem Header="File">
                 <MenuItem Header="New Notebook"
                           Command="{Binding NewNotebookCommand}"/>
                 <MenuItem Header="New Note"
@@ -24,8 +24,14 @@
                           Click="MenuItem_Click"/>
             </MenuItem>
         </Menu>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock x:Name="statusTextBlock"/>
+            </StatusBarItem>
+        </StatusBar>
         <ListView DockPanel.Dock="Left"
                   Width="140"
+                  SelectedValue="{Binding SelectedNotebook, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   ItemsSource="{Binding Notebooks}">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -40,13 +46,41 @@
                 <DataTemplate>
                     <TextBlock Text="{Binding Title}"/>
                 </DataTemplate>
-            </ListView.ItemTemplate> >
+            </ListView.ItemTemplate>
 
         </ListView>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button Content="Speech"/>
+                <Button Content="Speech"
+                        Click="Button_Click"/>
+                <ToggleButton x:Name="boldButton"
+                        Click="boldButton_Click">
+                    <TextBlock Text="B"
+                               FontWeight="Bold"/>
+                </ToggleButton>
+                <ToggleButton x:Name="italicButton"
+                              Click="italicButton_Click">
+                    <TextBlock Text="I"
+                               FontStyle="Italic"/>
+                </ToggleButton>
+                <ToggleButton x:Name="underlineButton"
+                              Click="underlineButton_Click">
+                    <TextBlock Text="U"
+                               TextDecorations="Underline"/>
+                </ToggleButton>
+                <ComboBox x:Name="fontFamilyComboBox"
+                          Width="100"
+                          SelectionChanged="fontFamilyComboBox_SelectionChanged"/>
+                <ComboBox x:Name="fontSizeComboBox"
+                          Width="50"
+                          IsEditable="True"
+                          TextBoxBase.TextChanged="fontSizeComboBox_TextChanged"/>
             </ToolBar>
         </ToolBarTray>
+        <Grid>
+            <RichTextBox x:Name="contentRichTextBox"
+                         TextChanged="contentRichTextBox_TextChanged"
+                         SelectionChanged="contentRichTextBox_SelectionChanged"/>
+        </Grid>
     </DockPanel>
 </Window>
