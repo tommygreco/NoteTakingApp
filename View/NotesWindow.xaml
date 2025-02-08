@@ -8,7 +8,8 @@
         xmlns:vm="clr-namespace:EvernoteClone.ViewModel"
         xmlns:uc="clr-namespace:EvernoteClone.View.UserControls"
         mc:Ignorable="d"
-        Title="NotesWindow" Height="500" Width="900">
+        Title="NotesWindow" Height="500" Width="900"
+        Closing="Window_Closing">
 
     <Window.Resources>
         <vm:NotesVM x:Key="vm"/>

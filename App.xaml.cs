@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Windows;
 
 namespace EvernoteClone
@@ -9,6 +10,7 @@ namespace EvernoteClone
     /// </summary>
     public partial class App : Application
     {
+        public static string UserId = string.Empty;
     }
 
 }

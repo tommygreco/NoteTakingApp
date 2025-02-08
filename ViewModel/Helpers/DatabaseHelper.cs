@@ -1,8 +1,11 @@
-﻿using SQLite;
+﻿using EvernoteClone.Model;
+using Newtonsoft.Json;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,79 +13,106 @@ namespace EvernoteClone.ViewModel.Helpers
 {
     public class DatabaseHelper
     {
-        // Store the database file in the project directory.
-        private static string dbFile = Path.Combine(Environment.CurrentDirectory, "notesDb.db3");
-
-        // Inserts an object into the database i.e. Note, Notebook, User.
-        public static bool Insert<T>(T item)
+        // Inserts an object into the database i.e. Note, Notebook.
+        public async static Task<bool> Insert<T>(T item) where T : HasIdInterface
         {
-            bool result = false;
+            // Serialize the object into JSON.
+            string jsonBody = JsonConvert.SerializeObject(item);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            using (SQLiteConnection conn = new SQLiteConnection(dbFile))
+            // Create new HTTP client.
+            using (var client = new HttpClient())
             {
-                // Create table if it doesn't exist. Insert the item and if insertion was successful, update retval.
-                conn.CreateTable<T>();
-                int rowsInserted = conn.Insert(item);
-                if (rowsInserted > 0)
+                // Send a post request with the content to insert into the correct table.
+                var result = await client.PostAsync($"{Keys.dbPath}{item.GetType().Name.ToLower()}.json", content);
+
+                // If successfully inserted, parse the newly created object's ID and update the object's ID field.
+                if (result.IsSuccessStatusCode)
                 {
-                    result = true;
+                    var jsonResult = await result.Content.ReadAsStringAsync();
+                    var deserializedJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonResult);
+                    foreach ( var o in deserializedJson)
+                    {
+                        item.Id = o.Value;
+                    }
+                    await Update(item);
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-
-            return result;
         }
 
         // Updates an object in the database.
-        public static bool Update<T>(T item)
+        public async static Task<bool> Update<T>(T item) where T : HasIdInterface
         {
-            bool result = false;
+            // Serialize the object into JSON.
+            string jsonBody = JsonConvert.SerializeObject(item);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            using (SQLiteConnection conn = new SQLiteConnection(dbFile))
+            // Create new HTTP client.
+            using (var client = new HttpClient())
             {
-                // Create table if it doesn't exist. Update the item and if updating was successful, update retval.
-                conn.CreateTable<T>();
-                int rowsInserted = conn.Update(item);
-                if (rowsInserted > 0)
+                // Send a patch request with the content to update the object in the correct table.
+                var result = await client.PatchAsync($"{Keys.dbPath}{item.GetType().Name.ToLower()}/{item.Id}.json", content);
+
+                if (result.IsSuccessStatusCode)
                 {
-                    result = true;
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-
-            return result;
         }
 
         // Deletes an item in the database.
-        public static bool Delete<T>(T item)
+        public async static Task<bool> Delete<T>(T item) where T : HasIdInterface
         {
-            bool result = false;
-
-            using (SQLiteConnection conn = new SQLiteConnection(dbFile))
+            using (var client = new HttpClient())
             {
-                // Create table if it doesn't exist. Delete the item and if deletion was successful, update retval.
-                conn.CreateTable<T>();
-                int rowsInserted = conn.Delete(item);
-                if (rowsInserted > 0)
+                var result = await client.DeleteAsync($"{Keys.dbPath}{item.GetType().Name.ToLower()}/{item.Id}.json");
+
+                if (result.IsSuccessStatusCode)
                 {
-                    result = true;
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-
-            return result;
         }
 
         // Gets the list of items from a table in the database.
-        public static List<T> Read<T>() where T : new()
+        public async static Task<List<T>> Read<T>() where T : HasIdInterface
         {
-            List<T> items;
-
-            using (SQLiteConnection conn = new SQLiteConnection(dbFile))
+            using (var client = new HttpClient())
             {
-                // Create table if it doesn't exist. Read all the items in the table and return them.
-                conn.CreateTable<T>();
-                items = conn.Table<T>().ToList();
-            }
+                var result = await client.GetAsync($"{Keys.dbPath}{typeof(T).Name.ToLower()}.json");
+                List<T> list = new List<T>();
 
-            return items;
+                if (result.IsSuccessStatusCode)
+                {
+                    var jsonResult = await result.Content.ReadAsStringAsync();
+
+                    var objects = JsonConvert.DeserializeObject<Dictionary<string, T>>(jsonResult);
+
+                    if (objects != null)
+                    {
+                        foreach (var o in objects)
+                        {
+                            o.Value.Id = o.Key;
+                            list.Add(o.Value);
+                        }
+                    }
+                }
+
+                return list;
+            }
         }
     }
 }

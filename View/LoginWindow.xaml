@@ -3,10 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:EvernoteClone.ViewModel"
         xmlns:local="clr-namespace:EvernoteClone.View"
+        xmlns:uc="clr-namespace:EvernoteClone.View.UserControls"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="LoginWindow" Height="300" Width="250"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ResourceDictionary>
+            <vm:LoginVM x:Key="loginVM"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Background="AliceBlue"
+          DataContext="{StaticResource loginVM}">
+        <uc:LoginPageControl x:Name="loginPageControl"
+                             Email="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             RegisterFirstName="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             RegisterLastName="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             RegisterConfirmPassword="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             LoginCommandProp="{Binding LoginCommand}"
+                             RegisterCommandProp="{Binding RegisterCommand}"
+                             UserCommandParameter="{Binding User}"
+                             CloseLogin="{Binding CloseLogin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             CloseRegister="{Binding CloseRegister, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+        </uc:LoginPageControl>
     </Grid>
 </Window>
