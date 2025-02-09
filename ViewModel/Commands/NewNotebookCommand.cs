@@ -19,6 +19,7 @@ namespace EvernoteClone.ViewModel.Commands
 
         public bool CanExecute(object? parameter)
         {
+            // A user can always create a new notebook.
             return true;
         }
 

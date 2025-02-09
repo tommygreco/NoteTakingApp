@@ -25,6 +25,7 @@ namespace EvernoteClone.ViewModel.Commands
 
         public void Execute(object? parameter)
         {
+            // Start editing the notebook name.
             VM.StartEditing();
         }
     }

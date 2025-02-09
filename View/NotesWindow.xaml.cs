@@ -63,6 +63,7 @@ namespace EvernoteClone.View
             contentRichTextBox.Document.Blocks.Clear();
             if (viewModel.SelectedNote != null)
             {
+                // When the selected note changes, get the newly selected note from the database and populate the rtf with the contents.
                 if (!string.IsNullOrEmpty(viewModel.SelectedNote.FileLocation))
                 {
                     string localFile = await AmazonS3Helper.retrieveFromS3(viewModel.SelectedNote.Id);
@@ -83,6 +84,7 @@ namespace EvernoteClone.View
 
         private void contentRichTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Update the amount of characters in the rtf.
             int numChars = (new TextRange(contentRichTextBox.Document.ContentStart, contentRichTextBox.Document.ContentEnd)).Text.Length;
 
             statusTextBlock.Text = $"Document Length: {numChars} characters";
@@ -92,6 +94,7 @@ namespace EvernoteClone.View
         {
             bool isButtonChecked = (sender as ToggleButton).IsChecked ?? false;
 
+            // If the bold button is checked, make the selection bold. Otherwise, unbold the selection.
             if (isButtonChecked)
             {
                 contentRichTextBox.Selection.ApplyPropertyValue(Inline.FontWeightProperty, FontWeights.Bold);
@@ -105,7 +108,7 @@ namespace EvernoteClone.View
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            // Utilize Azure services for speech to text.
             var speechConfig = SpeechConfig.FromSubscription(Keys.speechRegion, Keys.speechKey);
             using (var audioConfig = AudioConfig.FromDefaultMicrophoneInput())
             {
@@ -121,6 +124,7 @@ namespace EvernoteClone.View
         {
             bool isButtonEnabled = (sender as ToggleButton).IsChecked ?? false;
 
+            // If the italic button is checked, make the selection italicized. Otherwise, make it normal.
             if (isButtonEnabled)
                 contentRichTextBox.Selection.ApplyPropertyValue(Inline.FontStyleProperty, FontStyles.Italic);
             else
@@ -131,6 +135,7 @@ namespace EvernoteClone.View
         {
             bool isButtonEnabled = (sender as ToggleButton).IsChecked ?? false;
 
+            // If the underline button is checked, make the selection underlined. Otherwise, make it normal.
             if (isButtonEnabled)
                 contentRichTextBox.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecorations.Underline);
             else
@@ -143,6 +148,7 @@ namespace EvernoteClone.View
 
         private void contentRichTextBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
+            // Update the text style based on the buttons and combo box changes.
             var selectedWeight = contentRichTextBox.Selection.GetPropertyValue(Inline.FontWeightProperty);
             boldButton.IsChecked = (selectedWeight != DependencyProperty.UnsetValue) && (selectedWeight.Equals(FontWeights.Bold));
 
@@ -158,6 +164,7 @@ namespace EvernoteClone.View
 
         private void fontFamilyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Change the selection to the chosen font.
             if (fontFamilyComboBox.SelectedItem != null)
             {
                 contentRichTextBox.Selection.ApplyPropertyValue(Inline.FontFamilyProperty, fontFamilyComboBox.SelectedItem);
@@ -166,6 +173,7 @@ namespace EvernoteClone.View
 
         private void fontSizeComboBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Change the selection to the chosen font size.
             contentRichTextBox.Selection.ApplyPropertyValue(Inline.FontSizeProperty, fontSizeComboBox.Text);
         }
 
@@ -186,6 +194,7 @@ namespace EvernoteClone.View
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            // On application close, delete the local notes files downloaded from the database.
             Directory.Delete(localNotes, true);
         }
     }

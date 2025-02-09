@@ -13,12 +13,11 @@ namespace EvernoteClone.ViewModel.Helpers
 {
     public class FirebaseAuthHelper
     {
-        private static string api_key = "AIzaSyBdwesm1l-AQk6IwBPymuLtthWQRxlLU8c";
-
         public static async Task<bool> Register(User user)
         {
             using (HttpClient client = new HttpClient())
             {
+                // Create a new body for registration.
                 var body = new
                 {
                     email = user.Email,
@@ -26,11 +25,13 @@ namespace EvernoteClone.ViewModel.Helpers
                     returnSecureToken = true
                 };
 
+                // Serialize and send the post request.
                 string jsonBody = JsonConvert.SerializeObject(body);
                 var data = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync($"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={api_key}", data);
+                var response = await client.PostAsync($"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={Keys.firebaseKey}", data);
                 
+                // Set the user ID in the application if registered properly. Show error otherwise.
                 if (response.IsSuccessStatusCode)
                 {
                     string resultJson = await response.Content.ReadAsStringAsync();
@@ -52,6 +53,7 @@ namespace EvernoteClone.ViewModel.Helpers
         {
             using (HttpClient client = new HttpClient())
             {
+                // Create a new body for login.
                 var body = new
                 {
                     email = user.Email,
@@ -59,11 +61,13 @@ namespace EvernoteClone.ViewModel.Helpers
                     returnSecureToken = true
                 };
 
+                // Serialize and send the post request.
                 string jsonBody = JsonConvert.SerializeObject(body);
                 var data = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync($"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}", data);
+                var response = await client.PostAsync($"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={Keys.firebaseKey}", data);
 
+                // Set the user ID in the application if registered properly. Show error otherwise.
                 if (response.IsSuccessStatusCode)
                 {
                     string resultJson = await response.Content.ReadAsStringAsync();

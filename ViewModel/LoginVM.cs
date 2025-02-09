@@ -12,6 +12,7 @@ namespace EvernoteClone.ViewModel
 {
     public class LoginVM : INotifyPropertyChanged
     {
+        // Current user.
         private User user;
         public User User
         {
@@ -23,6 +24,7 @@ namespace EvernoteClone.ViewModel
             }
         }
 
+        // Email used for login/registration.
         private string email;
         public string Email
         {
@@ -42,6 +44,7 @@ namespace EvernoteClone.ViewModel
             }
         }
 
+        // Password used for login/registration.
         private string password;
         public string Password
         {
@@ -61,6 +64,7 @@ namespace EvernoteClone.ViewModel
             }
         }
 
+        // First name used for login/registration.
         private string name;
         public string Name
         {
@@ -80,6 +84,7 @@ namespace EvernoteClone.ViewModel
             }
         }
 
+        // Last name used for login/registration.
         private string lastName;
         public string LastName
         {
@@ -99,6 +104,7 @@ namespace EvernoteClone.ViewModel
             }
         }
 
+        // Password confirmation used for login/registration.
         private string confirmPassword;
         public string ConfirmPassword
         {
@@ -118,8 +124,8 @@ namespace EvernoteClone.ViewModel
             }
         }
 
+        // Used to determine if the Login window should be closed.
         private bool closeLogin;
-
         public bool CloseLogin
         {
             get { return closeLogin; }
@@ -130,8 +136,8 @@ namespace EvernoteClone.ViewModel
             }
         }
 
+        // Used to determine if the register stack panel should be closed.
         private bool closeRegister;
-
         public bool CloseRegister
         {
             get { return closeRegister; }
@@ -142,8 +148,7 @@ namespace EvernoteClone.ViewModel
             }
         }
 
-
-
+        // Commands for login and registration.
         public RegisterCommand RegisterCommand { get; set; }
         public LoginCommand LoginCommand { get; set; }
 
@@ -157,16 +162,19 @@ namespace EvernoteClone.ViewModel
             User = new User();
         }
 
+        // Occurs on a successful user registration.
         private void RegisterCommand_Authenticated(object? sender, EventArgs e)
         {
             CloseRegister = true;
         }
 
+        // Occurs on a successful login.
         private void LoginCommand_Authenticated(object? sender, EventArgs e)
         {
             CloseLogin = true;
         }
 
+        // Used to notify if a property has changed.
         public event PropertyChangedEventHandler? PropertyChanged;
         
         private void OnPropertyChanged(string propertyName)

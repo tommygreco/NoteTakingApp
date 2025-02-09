@@ -25,6 +25,8 @@ namespace EvernoteClone.ViewModel.Commands
             if (parameter != null)
             {
                 User curUser = parameter as User;
+
+                // Ensure all fields are filled out before attempting to register the user.
                 if (!string.IsNullOrEmpty(curUser.Name) &&
                     !string.IsNullOrEmpty(curUser.LastName) && 
                     !string.IsNullOrEmpty(curUser.Email) &&
@@ -45,6 +47,7 @@ namespace EvernoteClone.ViewModel.Commands
         {
             if (parameter != null)
             {
+                // Register the information in the firebase database.
                 bool result = await FirebaseAuthHelper.Register(parameter as User);
                 if (result)
                 {
@@ -54,6 +57,7 @@ namespace EvernoteClone.ViewModel.Commands
             }
         }
 
+        // Used to notify the window to toggle the register and login stack panels' visibility.
         public event EventHandler Authenticated;
         private void OnAuthenticated(EventArgs e)
         {

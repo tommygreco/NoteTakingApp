@@ -92,17 +92,19 @@ namespace EvernoteClone.ViewModel.Helpers
         {
             using (var client = new HttpClient())
             {
+                // Get the list of objects returned and create a new list.
                 var result = await client.GetAsync($"{Keys.dbPath}{typeof(T).Name.ToLower()}.json");
                 List<T> list = new List<T>();
 
                 if (result.IsSuccessStatusCode)
                 {
+                    // Parse and deserialize the json response.
                     var jsonResult = await result.Content.ReadAsStringAsync();
-
                     var objects = JsonConvert.DeserializeObject<Dictionary<string, T>>(jsonResult);
 
                     if (objects != null)
                     {
+                        // Update the object's ID property with the database object's key.
                         foreach (var o in objects)
                         {
                             o.Value.Id = o.Key;

@@ -14,11 +14,14 @@ namespace EvernoteClone.ViewModel
 {
     public class NotesVM : INotifyPropertyChanged
     {
+		// List of notebooks retrieved from the database.
         public ObservableCollection<Notebook> Notebooks { get; set; }
+
+		// List of notes retrieved from the database.
         public ObservableCollection<Note> Notes { get; set; }
 
+		// Currently selected note.
 		private Note selectedNote;
-
 		public Note SelectedNote
 		{
 			get { return selectedNote; }
@@ -30,9 +33,8 @@ namespace EvernoteClone.ViewModel
 			}
 		}
 
-
+		// Currently selected notebook.
 		private Notebook selectedNotebook;
-
         public Notebook SelectedNotebook
 		{
 			get { return selectedNotebook; }
@@ -44,8 +46,8 @@ namespace EvernoteClone.ViewModel
 			}
 		}
 
+		// Used for showing the textbox when renaming a notebook.
 		private Visibility isVisible;
-
 		public Visibility IsVisible
 		{
 			get { return isVisible; }
@@ -57,12 +59,13 @@ namespace EvernoteClone.ViewModel
 			
 		}
 
-
+		// Commands
 		public NewNotebookCommand NewNotebookCommand { get; set; }
         public NewNoteCommand NewNoteCommand { get; set; }
 		public EditCommand EditCommand { get; set; }
 		public EndEditingCommand EndEditingCommand { get; set; }
 
+		// Event Handlers.
         public event PropertyChangedEventHandler? PropertyChanged;
 		public event EventHandler? SelectedNoteChanged;
 
@@ -81,6 +84,7 @@ namespace EvernoteClone.ViewModel
 			GetNotebooks();
 		}
 
+		// Creates a new note for the selected notebook and inserts into the database.
 		public async void CreateNote(string notebookId)
 		{
 			Note newNote = new Note()
@@ -96,6 +100,7 @@ namespace EvernoteClone.ViewModel
 			GetNotes();
         }
 
+		// Creates a new notebook for the user and inserts into the database.
 		public async void CreateNotebook()
 		{
 			Notebook newNotebook = new Notebook()
@@ -108,6 +113,7 @@ namespace EvernoteClone.ViewModel
 			GetNotebooks();
 		}
 
+		// Retrieves notebooks from the database for the current user and adds them to the observable collection.
 		public async void GetNotebooks()
 		{
 			List<Notebook> notebooks = (await DatabaseHelper.Read<Notebook>()).Where(n => n.UserId == App.UserId).ToList();
@@ -118,6 +124,7 @@ namespace EvernoteClone.ViewModel
 			}
 		}
 
+        // Retrieves notes from the database for the current notebook and adds them to the observable collection.
         private async void GetNotes()
         {
 			if (SelectedNotebook != null)
@@ -131,16 +138,19 @@ namespace EvernoteClone.ViewModel
             }
         }
 
+		// Updates subscribers when a property is changed.
 		private void OnPropertyChanged(string propertyName)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
+		// Makes the textbox visible when editing a notebook name.
 		public void StartEditing()
 		{
 			IsVisible = Visibility.Visible;
 		}
 
+        // Makes the textbox collapsed when finished editing a notebook name.
         public void StopEditing(Notebook notebook)
         {
             IsVisible = Visibility.Collapsed;

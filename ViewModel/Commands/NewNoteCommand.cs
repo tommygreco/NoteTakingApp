@@ -23,6 +23,7 @@ namespace EvernoteClone.ViewModel.Commands
         }
         public bool CanExecute(object? parameter)
         {
+            // Create a new note as long as a notebook is selected.
             if (parameter as Notebook != null)
             {
                 return true;
@@ -32,6 +33,7 @@ namespace EvernoteClone.ViewModel.Commands
 
         public void Execute(object? parameter)
         {
+            // Create a new note.
             Notebook selectedNotebook = parameter as Notebook;
             VM.CreateNote(selectedNotebook.Id);
         }

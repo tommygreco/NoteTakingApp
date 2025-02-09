@@ -30,6 +30,7 @@ namespace EvernoteClone.ViewModel.Commands
 
             if (notebook != null)
             {
+                // Stop editing the notebook name.
                 VM.StopEditing(notebook);
             }
         }

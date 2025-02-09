@@ -27,6 +27,7 @@ namespace EvernoteClone.ViewModel.Commands
         {
             if (parameter != null)
             {
+                // Only allow login attempts if an email and password are present.
                 User curUser = parameter as User;
                 if (!string.IsNullOrEmpty(curUser.Email) && !string.IsNullOrEmpty(curUser.Password))
                 {
@@ -39,9 +40,9 @@ namespace EvernoteClone.ViewModel.Commands
 
         public async void Execute(object? parameter)
         {
-            // TODO: Implement funcitonality.
             if (parameter != null)
             {
+                // Attempt to log the user in.
                 bool result = await FirebaseAuthHelper.Login(parameter as User);
                 if (result)
                 {
@@ -50,6 +51,7 @@ namespace EvernoteClone.ViewModel.Commands
             }
         }
 
+        // Used to notify the window to close the login window on a successful login.
         public event EventHandler Authenticated;
         private void OnAuthenticated(EventArgs e)
         {

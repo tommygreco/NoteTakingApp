@@ -122,18 +122,6 @@ namespace EvernoteClone.View.UserControls
         public static readonly DependencyProperty CloseLoginProperty =
             DependencyProperty.Register("CloseLogin", typeof(bool), typeof(LoginPageControl), new PropertyMetadata(false, new PropertyChangedCallback(CloseLoginChanged)));
 
-        private static void CloseLoginChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if ((bool)e.NewValue == true)
-            {
-                LoginPageControl me = (LoginPageControl)d;
-                Window parent = Window.GetWindow(me);
-                parent.Close();
-            }
-        }
-
-
-
         public bool CloseRegister
         {
             get { return (bool)GetValue(CloseRegisterProperty); }
@@ -144,8 +132,20 @@ namespace EvernoteClone.View.UserControls
         public static readonly DependencyProperty CloseRegisterProperty =
             DependencyProperty.Register("CloseRegister", typeof(bool), typeof(LoginPageControl), new PropertyMetadata(false, new PropertyChangedCallback(DisplayLoginWindow)));
 
+        private static void CloseLoginChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // Close the login window when prompted.
+            if ((bool)e.NewValue == true)
+            {
+                LoginPageControl me = (LoginPageControl)d;
+                Window parent = Window.GetWindow(me);
+                parent.Close();
+            }
+        }
+
         private static void DisplayLoginWindow(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            // Display the login window when prompted.
             if ((bool)e.NewValue == true)
             {
                 LoginPageControl me = (LoginPageControl)d;
@@ -154,12 +154,14 @@ namespace EvernoteClone.View.UserControls
             }
         }
 
+        // Toggle the visibility of the login and register stack panels.
         private void registerButton_Click(object sender, RoutedEventArgs e)
         {
             loginStackPanel.Visibility = Visibility.Collapsed;
             registerStackPanel.Visibility = Visibility.Visible;
         }
 
+        // Toggle the visibility of the login and register stack panels.
         private void registerCancelButton_Click(object sender, RoutedEventArgs e)
         {
             loginStackPanel.Visibility = Visibility.Visible;
